@@ -1,167 +1,177 @@
-# Exercise-Induced Gene Expression Analysis
+# Exercise-Induced Gene Expression: RNA-seq Analysis
 
-RNA-seq analysis of exercise-induced gene expression changes in human skeletal muscle using publicly available sequencing data from **GEO accession GSE120862**.
+End-to-end RNA-seq analysis of exercise-induced gene expression changes in human skeletal muscle using publicly available data from **GEO accession GSE120862**.
+
+This project demonstrates a complete bioinformatics workflow from raw sequencing reads through alignment, gene quantification, differential expression analysis, gene annotation, and visualization.
 
 ## Project Overview
 
-This project investigates how aerobic exercise influences gene expression in human skeletal muscle. The goal was to build an end-to-end RNA-seq workflow and identify genes whose expression changes following exercise.
+The goal of this project was to investigate transcriptional changes in human skeletal muscle following aerobic exercise.
 
-The analysis begins with raw sequencing reads and progresses through quality control, genome alignment, gene-level quantification, differential expression analysis, and biological interpretation.
+A subset of six RNA-seq samples representing three matched subjects at baseline and post-exercise was processed on a high-performance computing system and analyzed using a paired differential expression design.
 
-## Research Question
+The complete workflow combines Linux/HPC processing with statistical analysis in R.
 
-**How does exercise influence gene expression in human skeletal muscle, and which genes and biological processes are associated with the response to exercise?**
+## Workflow
 
-## Dataset
+**NCBI SRA → FASTQ → FastQC → HISAT2 → SAM/BAM → featureCounts → DESeq2 → Gene Annotation → PCA & Volcano Plot**
 
-* **Source:** NCBI Gene Expression Omnibus (GEO)
-* **Accession:** GSE120862
-* **Organism:** *Homo sapiens*
-* **Tissue:** Skeletal muscle
-* **Sequencing:** RNA-seq
-* **Comparison:** Baseline vs. post-exercise samples
+### 1. Raw Read Processing
 
-A subset of samples from the dataset was used for the analysis.
+Raw RNA-seq reads were downloaded from the NCBI Sequence Read Archive using SRA Toolkit.
 
-## Bioinformatics Pipeline
+### 2. Quality Control
 
-The project followed this general workflow:
+FastQC was used to assess sequencing quality, including base quality, sequence duplication, GC-content distribution, and potential adapter contamination.
 
-**Raw RNA-seq reads → FastQC → HISAT2 → featureCounts → DESeq2 → PCA / Volcano Plot → Gene Ontology**
+### 3. Alignment
 
-### 1. Quality Control — FastQC
+Single-end sequencing reads were aligned to the human **GRCh38** reference genome using HISAT2.
 
-Raw sequencing reads were evaluated with **FastQC** to assess sequencing quality before downstream analysis.
+### 4. Alignment Processing
 
-### 2. Read Alignment — HISAT2
+SAMtools was used to:
 
-RNA-seq reads were aligned to the human **GRCh38 reference genome** using **HISAT2**.
+- Convert SAM files to BAM format
+- Sort BAM files
+- Index sorted BAM files
 
-HISAT2 performs efficient spliced alignment, allowing RNA-seq reads spanning exon-exon junctions to be mapped to the reference genome.
+### 5. Gene Quantification
 
-### 3. Gene Quantification — featureCounts
+Gene-level read counts were generated with featureCounts using the **GENCODE v44** human gene annotation.
 
-Aligned reads were assigned to genes using **featureCounts** and a GENCODE gene annotation file.
+The resulting count matrix was used as input for downstream statistical analysis.
 
-The resulting gene-count matrix contained read counts for each gene across the analyzed samples and served as the input for differential expression analysis.
+### 6. Differential Expression Analysis
 
-### 4. Differential Expression — DESeq2
+Differential expression analysis was performed in R using **DESeq2**.
 
-Differential gene expression analysis was performed in **R using DESeq2**.
+The paired model:
 
-DESeq2 models RNA-seq count data using a negative binomial model and was used to compare gene expression between baseline and post-exercise samples.
+```r
+~ subject + time_point
+```
 
-The analysis included:
+accounts for subject-level variation while testing for expression changes between baseline and post-exercise samples.
 
-* Count normalization
-* Differential expression testing
-* Log2 fold-change estimation
-* Multiple-testing correction
-* Identification of differentially expressed genes
+Low-count genes were removed prior to analysis.
 
-### 5. Data Visualization
+### 7. Gene Annotation and Visualization
 
-Gene-expression patterns and differential-expression results were explored using:
+Ensembl gene identifiers were mapped to human gene symbols and gene names to support biological interpretation.
 
-* **Principal Component Analysis (PCA)** to examine overall variation among samples
-* **Volcano plots** to visualize statistical significance and magnitude of gene-expression changes
-* Ranked differential-expression results to investigate genes of biological interest
+Results were visualized using:
 
-### 6. Functional Interpretation
+- Principal Component Analysis (PCA)
+- Volcano plots
+- Ranked upregulated and downregulated gene tables
 
-Genes identified through differential expression analysis were investigated using **Gene Ontology (GO)** to explore their biological functions and associated processes.
+## Results
 
-The analysis also examined **PPARGC1A**, a gene associated with metabolic and mitochondrial responses to exercise.
+After low-count filtering:
 
-## Statistical Methods
+- **22,770 genes** were analyzed
+- **480 genes** were significantly differentially expressed (`adjusted p-value < 0.05`)
+- **349 genes** were significantly upregulated
+- **131 genes** were significantly downregulated
 
-Several computational and statistical approaches were incorporated into the workflow:
+### PCA
 
-* **HISAT2 sequence alignment** for mapping RNA-seq reads to the reference genome
-* **featureCounts read assignment** for gene-level quantification
-* **Negative binomial modeling** with DESeq2
-* **Benjamini-Hochberg multiple-testing correction**
-* **Principal Component Analysis (PCA)** for dimensionality reduction and visualization
+![PCA Plot](results/pca_plot.png)
 
-## Tools & Technologies
+Principal component analysis of variance-stabilized expression data was used to examine global expression patterns across baseline and post-exercise samples.
 
-* **R**
-* **DESeq2**
-* **Linux / Unix**
-* **High-Performance Computing (HPC)**
-* **FastQC**
-* **HISAT2**
-* **featureCounts**
-* **NCBI SRA Toolkit**
-* **Gene Ontology**
-* **GRCh38 human reference genome**
-* **GENCODE gene annotation**
+### Volcano Plot
+
+![Volcano Plot](results/volcano_plot.png)
+
+The volcano plot summarizes genome-wide expression changes following exercise and highlights genes meeting the adjusted p-value significance threshold.
 
 ## Repository Structure
 
 ```text
-exercise-gene-expression-rnaseq/
-│
-├── README.md
-├── LICENSE
-├── .gitignore
-│
-├── scripts/
-│   ├── 01_download_qc.sh
-│   ├── 02_hisat2_alignment.sh
-│   ├── 03_featurecounts.sh
-│   └── 04_deseq2_analysis.R
+.
+├── analysis/
+│   └── RNASeq_Stats.Rmd
 │
 ├── data/
-│   └── sample_metadata.csv
+│   └── sample_data.csv
 │
-└── results/
-    ├── pca_plot.png
-    ├── volcano_plot.png
-    └── differential_expression_results.csv
+├── docs/
+│   └── RNASeq_Stats.html
+│
+├── pipeline/
+│   ├── 01_download_reads.sh
+│   ├── 02_fastqc.sh
+│   ├── 03_align_hisat2.sh
+│   ├── 04_process_bam.sh
+│   ├── 05_featurecounts.sh
+│   └── README.md
+│
+├── results/
+│   ├── differential_expression_results.csv
+│   ├── significant_genes.csv
+│   ├── top_upregulated_genes.csv
+│   ├── top_downregulated_genes.csv
+│   ├── pca_plot.png
+│   ├── volcano_plot.png
+│   └── README.md
+│
+├── .gitignore
+├── LICENSE
+└── README.md
 ```
 
-Large sequencing and alignment files such as FASTQ, SAM, and BAM files are not included in the repository.
+## Tools and Technologies
 
-## Results
+### Bioinformatics
 
-### Principal Component Analysis
+- SRA Toolkit
+- FastQC
+- HISAT2
+- SAMtools
+- featureCounts
+- DESeq2
+- AnnotationDbi
+- org.Hs.eg.db
 
-PCA was used to visualize overall gene-expression variation among baseline and post-exercise samples.
+### Programming and Computing
 
-![PCA of baseline and post-exercise RNA-seq samples](results/PCA_plot.png)
+- R
+- Bash
+- Linux
+- High-Performance Computing (HPC)
+- ggplot2
 
-### Differential Gene Expression
+## Dataset
 
-DESeq2 was used to identify genes showing differences in expression between baseline and post-exercise conditions.
+**GEO accession:** GSE120862
 
-![Volcano plot of differential gene expression](results/volcano_plot.png)
+The analysis uses human skeletal muscle RNA-seq samples collected at baseline and following exercise.
 
-### Biological Interpretation
+A six-sample subset consisting of three matched baseline/post-exercise pairs was used to make the raw-read processing workflow computationally manageable.
 
-Differential expression analysis identified 480 genes with an adjusted p-value below 0.05, including 349 upregulated and 131 downregulated genes in post-exercise samples relative to baseline. The strongest observed expression changes included genes with log2 fold changes greater than +7 and below −3.
+## Computational Environment
 
-### PPARGC1A
+Raw sequencing data were processed on the **University of Arizona Ocelote HPC system**.
 
-PPARGC1A was examined because of its established role in mitochondrial biogenesis and metabolic adaptation to endurance exercise.
+The original HPC workflow used an interactive allocation with 12 tasks and approximately 72 GB of total requested memory.
 
-PPARGC1A showed a small positive log2 fold change of 0.143, but the result was not statistically significant (padj = 0.926). This highlights the distinction between a biologically relevant candidate gene and a statistically supported differential-expression result.
+The shell scripts in `pipeline/` use relative paths so the workflow can be adapted to other Linux/HPC environments with the appropriate software and reference files installed.
+
+Large FASTQ, BAM, genome index, and reference files are intentionally excluded from the repository.
 
 ## Reproducibility
 
-The computational portion of this project was performed in a **Linux high-performance computing environment**.
+The project is divided into two major stages:
 
-Raw sequencing data are publicly available through **GEO accession GSE120862**. Large raw and intermediate sequencing files are excluded from this repository due to file size.
+1. `pipeline/` contains the Linux/HPC workflow that converts raw sequencing reads into a gene-level count matrix.
+2. `analysis/RNASeq_Stats.Rmd` contains the R workflow used for differential expression analysis, annotation, statistical interpretation, and visualization.
 
-Scripts used for quality control, alignment, gene quantification, and differential-expression analysis are provided to document the workflow.
+The rendered analysis is available in `docs/RNASeq_Stats.html`, while exported tables and figures are available in `results/`.
 
-## Project Purpose
+## Author
 
-This project was completed as part of undergraduate bioinformatics coursework and demonstrates experience with:
-
-* End-to-end RNA-seq analysis
-* High-performance computing
-* Linux command-line workflows
-* Genomic data processing
-* Statistical analysis of gene-expression data
-* Biological interpretation of computational results
+**Vincent Casilio**  
+B.S. Bioinformatics  
+University of Arizona
