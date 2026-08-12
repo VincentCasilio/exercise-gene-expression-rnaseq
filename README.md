@@ -141,7 +141,11 @@ DESeq2 was used to identify genes showing differences in expression between base
 
 Differential-expression results were used to investigate genes and biological processes potentially involved in the skeletal-muscle response to exercise.
 
-**PPARGC1A** was selected as a gene of particular biological interest because of its role in metabolic and mitochondrial regulation.
+### PPARGC1A
+
+PPARGC1A was examined because of its established role in mitochondrial biogenesis and metabolic adaptation to endurance exercise.
+
+In this subset of the dataset, PPARGC1A showed a small positive log2 fold change, but the result did not meet the adjusted p-value threshold for statistical significance. This illustrates the importance of distinguishing biological expectations from statistically supported results.
 
 ## Reproducibility
 
