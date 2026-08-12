@@ -339,7 +339,7 @@ volcano_df$significant <- (
   volcano_df$padj < 0.05
 )
 
-ggplot(
+volcano_plot <- ggplot(
   volcano_df,
   aes(
     x = log2FoldChange,
@@ -362,6 +362,18 @@ ggplot(
     color = "Adjusted P < 0.05"
   ) +
   theme_minimal()
+
+# Display plot
+volcano_plot
+
+# Export high-resolution PNG
+ggsave(
+  "results/volcano_plot.png",
+  plot = volcano_plot,
+  width = 8,
+  height = 6,
+  dpi = 300
+)
 ```
 
 # Principal Component Analysis
@@ -384,7 +396,7 @@ percent_var <- round(
   100 * attr(pca_data, "percentVar")
 )
 
-ggplot(
+pca_plot <- ggplot(
   pca_data,
   aes(
     x = PC1,
@@ -417,6 +429,18 @@ ggplot(
     color = "Time Point"
   ) +
   theme_minimal()
+
+# Display plot
+pca_plot
+
+# Export high-resolution PNG
+ggsave(
+  "results/pca_plot.png",
+  plot = pca_plot,
+  width = 8,
+  height = 6,
+  dpi = 300
+)
 ```
 
 
