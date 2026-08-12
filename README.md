@@ -27,10 +27,5 @@ Tools Used
   R
   DESeq2
 
-Key Findings
-  Significant transcriptional changes occurred following exercise.
-PPARGC1A showed increased expression following exercise.
-Pathway analysis indicated enrichment of mitochondrial and metabolic processes.
-
 Example Results
   Coming soon...
