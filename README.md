@@ -129,13 +129,13 @@ Large sequencing and alignment files such as FASTQ, SAM, and BAM files are not i
 
 PCA was used to visualize overall gene-expression variation among baseline and post-exercise samples.
 
-*PCA figure will be added here.*
+![PCA of baseline and post-exercise RNA-seq samples](results/pca_plot.png)
 
 ### Differential Gene Expression
 
 DESeq2 was used to identify genes showing differences in expression between baseline and post-exercise conditions.
 
-*Volcano plot will be added here.*
+![Volcano plot of differential gene expression](results/volcano_plot.png)
 
 ### Biological Interpretation
 
