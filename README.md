@@ -139,13 +139,13 @@ DESeq2 was used to identify genes showing differences in expression between base
 
 ### Biological Interpretation
 
-Differential-expression results were used to investigate genes and biological processes potentially involved in the skeletal-muscle response to exercise.
+Differential expression analysis identified 480 genes with an adjusted p-value below 0.05, including 349 upregulated and 131 downregulated genes in post-exercise samples relative to baseline. The strongest observed expression changes included genes with log2 fold changes greater than +7 and below −3.
 
 ### PPARGC1A
 
 PPARGC1A was examined because of its established role in mitochondrial biogenesis and metabolic adaptation to endurance exercise.
 
-In this subset of the dataset, PPARGC1A showed a small positive log2 fold change, but the result did not meet the adjusted p-value threshold for statistical significance. This illustrates the importance of distinguishing biological expectations from statistically supported results.
+PPARGC1A showed a small positive log2 fold change of 0.143, but the result was not statistically significant (padj = 0.926). This highlights the distinction between a biologically relevant candidate gene and a statistically supported differential-expression result.
 
 ## Reproducibility
 
