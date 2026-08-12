@@ -129,7 +129,7 @@ Large sequencing and alignment files such as FASTQ, SAM, and BAM files are not i
 
 PCA was used to visualize overall gene-expression variation among baseline and post-exercise samples.
 
-![PCA of baseline and post-exercise RNA-seq samples](results/pca_plot.png)
+![PCA of baseline and post-exercise RNA-seq samples](results/PCA_plot.png)
 
 ### Differential Gene Expression
 
